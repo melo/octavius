@@ -20,11 +20,30 @@ foreach my $test (@msgs_tests) {
   is($id, $expected_id++, 'proper id');
 }
 
-my ($len, $id, $type, @attrs) = Protocol::Octavius::Message::parse_mesg(
+my ($msg, $id) = Protocol::Octavius::Message::mk_id_mesg('my-name');
+is(
+  $msg,
+  "\x00\x00\x00\x0C\x00\x04\x69\x01my-name\x00",
+  'ID message is ok',
+);
+is($id, 4, 'proper ID');
+
+($msg, $id) = Protocol::Octavius::Message::mk_id_ack_mesg('my-name');
+is(
+  $msg,
+  "\x00\x00\x00\x0C\x00\x05\x49\x01my-name\x00",
+  'ID Ack message is ok',
+);
+is($id, 5, 'proper ID');
+
+
+# Parser
+
+my ($len, $rid, $type, @attrs) = Protocol::Octavius::Message::parse_mesg(
   "\x00\x00\x00\x09\x00\x03\x04\x02a\x00bb\x00"
 );
 is($len, 13);
-is($id, 3);
+is($rid, 3);
 is($type, 4);
 is($attrs[0], 'a');
 is($attrs[1], 'bb');

@@ -18,6 +18,21 @@ sub _encode {
   return (pack('N', length($header)).$header, $id);
 }
 
+############
+# ID message
+
+sub mk_id_mesg {
+  my ($id) = @_;
+  
+  return _encode(ord('i'), $id);
+}
+
+sub mk_id_ack_mesg {
+  my ($id_ack) = @_;
+  
+  return _encode(ord('I'), $id_ack);
+}
+
 
 ################
 # Message parser
