@@ -20,3 +20,11 @@ foreach my $test (@msgs_tests) {
   is($id, $expected_id++, 'proper id');
 }
 
+my ($len, $id, $type, @attrs) = Protocol::Octavius::Message::parse_mesg(
+  "\x00\x00\x00\x09\x00\x03\x04\x02a\x00bb\x00"
+);
+is($len, 13);
+is($id, 3);
+is($type, 4);
+is($attrs[0], 'a');
+is($attrs[1], 'bb');

@@ -19,6 +19,26 @@ sub _encode {
 }
 
 
+################
+# Message parser
+
+sub parse_mesg {
+  my ($message) = @_;
+
+  return unless length($message) >= 4;
+
+  my $header_len = unpack('N', $message) + 4;
+  return unless length($message) >= $header_len;
+  
+  my ($id, $type, $n_attr) = unpack('x4nCC', $message);
+  
+  my @attrs;
+  my $tmpl = 'Z*' x $n_attr;
+  @attrs = unpack('x8'.$tmpl, $message);
+  
+  return ($header_len, $id, $type, @attrs);
+}
+
 42; # End of X
 
 __END__
