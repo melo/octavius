@@ -12,8 +12,10 @@ sub _encode {
   my $n_attrs = @attrs;
   
   my $id = $next_message_id++;
-  my $tmpl = 'nCC' . ('n/a*' x $n_attrs);  
-  return (pack($tmpl, $id, $type, $n_attrs, @attrs), $id);
+  my $tmpl = 'nCC' . ('Z*' x $n_attrs);  
+  my $header = pack($tmpl, $id, $type, $n_attrs, @attrs);
+  
+  return (pack('N', length($header)).$header, $id);
 }
 
 
