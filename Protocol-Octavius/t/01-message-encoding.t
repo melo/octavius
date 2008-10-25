@@ -39,11 +39,31 @@ is($id, 5, 'proper ID');
 
 # Parser
 
-my ($len, $rid, $type, @attrs) = Protocol::Octavius::MessageCoder::parse_mesg(
+my $r = Protocol::Octavius::MessageCoder->parse_mesg(
   "\x00\x00\x00\x09\x00\x03\x04\x02a\x00bb\x00"
 );
+ok(ref($r));
+my ($len, $rid, $type, @attrs) = @$r;
 is($len, 13);
 is($rid, 3);
 is($type, 4);
 is($attrs[0], 'a');
 is($attrs[1], 'bb');
+
+my %incomplete = (
+  "\x00" => 4,
+  "\x00\x00" => 4,
+  "\x00\x00\x00" => 4,
+  "\x00\x00\x00\x01" => 5,
+  "\x00\x00\x00\x0A" => 14,
+  "\x00\x00\x00\x0Ai" => 14,
+  "\x00\x00\x00\x0Bi" => 15,
+  "\x00\x00\x00\x09\x00\x03\x04\x02a\x00bb" => 13,
+);
+
+while (my ($try, $res) = each %incomplete) {
+  my $ans = Protocol::Octavius::MessageCoder->parse_mesg($try);
+  ok(!ref($ans));
+  is($ans, $res, "for '".unpack("H*", $try)."' => $res");
+}
+

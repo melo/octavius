@@ -3,6 +3,7 @@ package Protocol::Octavius::MessageCoder;
 use strict;
 use warnings;
 
+
 our $VERSION = '0.1';
 
 my $next_message_id = 1;
@@ -38,12 +39,12 @@ sub mk_id_ack_mesg {
 # Message parser
 
 sub parse_mesg {
-  my ($message) = @_;
+  my ($class, $message) = @_;
 
-  return unless length($message) >= 4;
+  return 4 unless length($message) >= 4;
 
   my $header_len = unpack('N', $message) + 4;
-  return unless length($message) >= $header_len;
+  return $header_len unless length($message) >= $header_len;
   
   my ($id, $type, $n_attr) = unpack('x4nCC', $message);
   
@@ -51,7 +52,7 @@ sub parse_mesg {
   my $tmpl = 'Z*' x $n_attr;
   @attrs = unpack('x8'.$tmpl, $message);
   
-  return ($header_len, $id, $type, @attrs);
+  return [ $header_len, $id, $type, @attrs ];
 }
 
 42; # End of X
