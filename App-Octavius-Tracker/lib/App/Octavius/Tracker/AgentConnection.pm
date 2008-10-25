@@ -12,6 +12,8 @@ __PACKAGE__->attr('peer_port', chained => 1);
 __PACKAGE__->attr('sock',      chained => 1);
 __PACKAGE__->attr('tracker',   chained => 1);
 
+__PACKAGE__->attr('handle', chained => 1);
+
 
 ###################
 # Start the reading
@@ -19,7 +21,23 @@ __PACKAGE__->attr('tracker',   chained => 1);
 sub start {
   my $self = shift;
   
-  # ...
+  my $handle = AnyEvent::Handle->new(
+    fh         => $self->sock,
+    timeout    => 5,
+    on_eof     => sub { $self->stop('eof')     },
+    on_error   => sub { $self->stop('error')   },
+    on_timeout => sub { $self->stop('timeout') },
+  );
+  $self->handle($handle);
+  
+  return;
+}
+
+sub stop {
+  my $self = shift;
+  
+  $self->handle(undef);
+  close($self->sock);
 }
 
 
