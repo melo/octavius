@@ -16,7 +16,7 @@ sub send {
   my ($self, $id, $mesg, $cb) = @_;
   my $pending = $self->{pending};
   
-  my $timer; $timer = $self->_mk_timer(2, sub {
+  my $guard; $guard = $self->_cb_in(2, sub {
     delete $pending->{$id};
     $cb->($self, $id, undef) if $cb;
   });
@@ -24,6 +24,7 @@ sub send {
   $pending->{$id} = {
     id => $id,
     cb => $cb,
+    gr => $guard,
   };
   
   $self->_write($mesg);
