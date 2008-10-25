@@ -8,7 +8,7 @@ use Getopt::Long;
 
 our $VERSION = '0.01';
 
-__PACKAGE__->attr('peer_port', chained => 1, default => 4920);
+__PACKAGE__->attr('agents_port', chained => 1, default => 4920);
 
 __PACKAGE__->attr('tracker_guard', chained => 1);
 
@@ -20,7 +20,7 @@ sub start {
   
   $SIG{PIPE} = 'IGNORE';
   
-#  $self->start_peer_port;
+#  $self->start_agents_port;
   
   my $guard = AnyEvent->condvar;
   $self->tracker_guard(sub { $guard->send });
@@ -31,7 +31,7 @@ sub start {
 sub stop {
   my $self = shift;
   
-#  $self->stop_peer_port;
+#  $self->stop_agents_port;
 
   my $g = $self->tracker_guard;
   $g->() if $g;
@@ -47,7 +47,7 @@ sub parse_options {
   my $self = shift;
 
   my $ok = GetOptions(
-    'peer-port=i' => sub { $self->peer_port($_[1]) },
+    'agents-port=i' => sub { $self->agents_port($_[1]) },
   );
   
   $self->usage unless $ok;
@@ -56,7 +56,7 @@ sub parse_options {
 }
 
 sub usage {
-  print STDERR "\nUsage: $0 [--peer-port=PORT]\n\n";
+  print STDERR "\nUsage: $0 [--agents-port=PORT]\n\n";
   exit(1);
 }
 
