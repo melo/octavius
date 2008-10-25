@@ -60,6 +60,17 @@ sub usage {
   exit(1);
 }
 
+
+########
+# Logger
+
+sub log {
+  my $self = shift;
+  my $time = localtime();
+  warn "[$time] [$$] ".join('', @_)."\n";
+}
+
+
 42; # End of App::Octavius::Tracker
 
 __END__
