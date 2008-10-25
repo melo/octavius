@@ -4,7 +4,9 @@ Makefile.PL
 README
 lib/Protocol/Octavius.pm
 lib/Protocol/Octavius/MessageCoder.pm
+lib/Protocol/Octavius/Base.pm
 t/00-load.t
 t/01-message-encoding.t
+t/02-base.t
 t/pod-coverage.t
 t/pod.t
