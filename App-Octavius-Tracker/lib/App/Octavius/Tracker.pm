@@ -3,11 +3,41 @@ package App::Octavius::Tracker;
 use warnings;
 use strict;
 use base 'Mojo::Base';
+use AnyEvent;
 use Getopt::Long;
 
 our $VERSION = '0.01';
 
 __PACKAGE__->attr('peer_port', chained => 1, default => 4920);
+
+__PACKAGE__->attr('tracker_guard', chained => 1);
+
+#############################
+# Manage the tracker lifetime
+
+sub start {
+  my $self = shift;
+  
+  $SIG{PIPE} = 'IGNORE';
+  
+#  $self->start_peer_port;
+  
+  my $guard = AnyEvent->condvar;
+  $self->tracker_guard(sub { $guard->send });
+  
+  $guard->recv;
+}
+
+sub stop {
+  my $self = shift;
+  
+#  $self->stop_peer_port;
+
+  my $g = $self->tracker_guard;
+  $g->() if $g;
+  
+  return;
+}
 
 
 ######################
