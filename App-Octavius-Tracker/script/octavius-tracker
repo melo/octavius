@@ -1,0 +1,16 @@
+#!/usr/bin/env perl
+#
+# Octavius Tracker
+#
+
+use strict;
+use warnings;
+use App::Octavius::Tracker;
+
+my $tracker = App::Octavius::Tracker->new;
+$tracker->parse_options;
+
+$tracker->start;
+
+exit(0);
+

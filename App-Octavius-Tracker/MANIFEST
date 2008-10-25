@@ -2,6 +2,7 @@ Changes
 MANIFEST
 Makefile.PL
 README
+script/octavius-tracker
 lib/App/Octavius/Tracker.pm
 t/00-load.t
 t/01-args.t
