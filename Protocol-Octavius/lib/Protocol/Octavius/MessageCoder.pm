@@ -1,4 +1,4 @@
-package Protocol::Octavius::Message;
+package Protocol::Octavius::MessageCoder;
 
 use strict;
 use warnings;

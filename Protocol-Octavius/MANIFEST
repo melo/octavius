@@ -3,6 +3,8 @@ MANIFEST
 Makefile.PL
 README
 lib/Protocol/Octavius.pm
+lib/Protocol/Octavius/MessageCoder.pm
 t/00-load.t
+t/01-message-encoding.t
 t/pod-coverage.t
 t/pod.t

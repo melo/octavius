@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Test::More 'no_plan';
 
-use Protocol::Octavius::Message;
+use Protocol::Octavius::MessageCoder;
 
 my @msgs_tests = (
   [ [ 1            ] => "\x00\x00\x00\x04\x00\x01\x01\x00" ],
@@ -15,12 +15,12 @@ my @msgs_tests = (
 my $expected_id = 1;
 foreach my $test (@msgs_tests) {
   my ($args, $result) = @$test;
-  my ($msg, $id) = Protocol::Octavius::Message::_encode(@$args);
+  my ($msg, $id) = Protocol::Octavius::MessageCoder::_encode(@$args);
   is($msg, $result, "encode correct for ID $expected_id ".length($msg).' '.length($result));
   is($id, $expected_id++, 'proper id');
 }
 
-my ($msg, $id) = Protocol::Octavius::Message::mk_id_mesg('my-name');
+my ($msg, $id) = Protocol::Octavius::MessageCoder::mk_id_mesg('my-name');
 is(
   $msg,
   "\x00\x00\x00\x0C\x00\x04\x69\x01my-name\x00",
@@ -28,7 +28,7 @@ is(
 );
 is($id, 4, 'proper ID');
 
-($msg, $id) = Protocol::Octavius::Message::mk_id_ack_mesg('my-name');
+($msg, $id) = Protocol::Octavius::MessageCoder::mk_id_ack_mesg('my-name');
 is(
   $msg,
   "\x00\x00\x00\x0C\x00\x05\x49\x01my-name\x00",
@@ -39,7 +39,7 @@ is($id, 5, 'proper ID');
 
 # Parser
 
-my ($len, $rid, $type, @attrs) = Protocol::Octavius::Message::parse_mesg(
+my ($len, $rid, $type, @attrs) = Protocol::Octavius::MessageCoder::parse_mesg(
   "\x00\x00\x00\x09\x00\x03\x04\x02a\x00bb\x00"
 );
 is($len, 13);
