@@ -5,6 +5,7 @@ README
 lib/Protocol/Octavius.pm
 lib/Protocol/Octavius/MessageCoder.pm
 lib/Protocol/Octavius/Base.pm
+lib/Protocol/Octavius/Peer.pm
 t/00-load.t
 t/01-message-encoding.t
 t/02-base.t
