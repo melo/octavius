@@ -2,44 +2,34 @@ package Protocol::Octavius::MessageCoder;
 
 use strict;
 use warnings;
+use base qw( Exporter );
 
 
 our $VERSION = '0.1';
 
+
+#################
+# Message encoder
+
 my $next_message_id = 1;
 
-sub _encode {
-  my ($type, @attrs) = @_;
+sub msg_encoder {
+  my ($id, $type, @attrs) = @_;
   my $n_attrs = @attrs;
   
-  my $id = $next_message_id++;
+  $id = $next_message_id++ unless defined $id;
   my $tmpl = 'nCC' . ('Z*' x $n_attrs);  
   my $header = pack($tmpl, $id, $type, $n_attrs, @attrs);
   
   return (pack('N', length($header)).$header, $id);
 }
 
-############
-# ID message
-
-sub mk_id_mesg {
-  my ($id) = @_;
-  
-  return _encode(ord('i'), $id);
-}
-
-sub mk_id_ack_mesg {
-  my ($id_ack) = @_;
-  
-  return _encode(ord('I'), $id_ack);
-}
-
 
 ################
-# Message parser
+# Message decoder
 
-sub parse_mesg {
-  my ($class, $message) = @_;
+sub msg_decoder {
+  my ($message) = @_;
 
   return 4 unless length($message) >= 4;
 
@@ -54,6 +44,20 @@ sub parse_mesg {
   
   return [ $header_len, $id, $type, @attrs ];
 }
+
+
+########################
+# Exporter configuration
+
+@Protocol::Octavius::MessageCoder::EXPORT = qw();
+%Protocol::Octavius::MessageCoder::EXPORT_TAGS = (
+    coders => [ qw( msg_encoder msg_decoder ) ],
+);
+@Protocol::Octavius::MessageCoder::EXPORT_OK = (
+    (map { @$_} values %Protocol::Octavius::MessageCoder::EXPORT_TAGS)
+);
+$Protocol::Octavius::MessageCoder::EXPORT_TAGS{all} = [ @Protocol::Octavius::MessageCoder::EXPORT_OK ];
+
 
 42; # End of X
 
