@@ -4,6 +4,7 @@ Makefile.PL
 README
 script/octavius-tracker
 lib/App/Octavius/Tracker.pm
+lib/App/Octavius/Tracker/AgentConnection.pm
 t/00-load.t
 t/01-args.t
 t/pod-coverage.t

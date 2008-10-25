@@ -8,6 +8,8 @@ use AnyEvent::Socket;
 use Getopt::Long;
 use IO::Socket::INET qw( SOMAXCONN );
 
+use App::Octavius::Tracker::AgentConnection;
+
 our $VERSION = '0.01';
 
 __PACKAGE__->attr('agents_port', chained => 1, default => 4920);
@@ -15,6 +17,11 @@ __PACKAGE__->attr('agents_host', chained => 1);
 __PACKAGE__->attr('agents_listen_queue',
   chained => 1,
   default => sub { SOMAXCONN },
+);
+
+__PACKAGE__->attr('agent_connection_class',
+  chained => 1,
+  default => 'App::Octavius::Tracker::AgentConnection',
 );
 
 __PACKAGE__->attr('tracker_guard', chained => 1);
@@ -40,10 +47,12 @@ sub start_agents_port {
         return;
       }
       
-      syswrite($sock, "hello $peer_host $peer_port, going down\n");
-      close($sock);
-      $self->stop;
-      # ...
+      $self->agent_connection_class->new(
+        tracker   => $self,
+        sock      => $sock,
+        peer_host => $peer_host,
+        peer_port => $peer_port,
+      )->start;
     },
     
     # Setup listen queue size, record our hostname and port
