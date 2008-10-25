@@ -3,11 +3,32 @@ package App::Octavius::Tracker;
 use warnings;
 use strict;
 use base 'Mojo::Base';
+use Getopt::Long;
 
 our $VERSION = '0.01';
 
 __PACKAGE__->attr('peer_port', chained => 1, default => 4920);
 
+
+######################
+# Command line options
+
+sub parse_options {
+  my $self = shift;
+
+  my $ok = GetOptions(
+    'peer-port=i' => sub { $self->peer_port($_[1]) },
+  );
+  
+  $self->usage unless $ok;
+  
+  return;
+}
+
+sub usage {
+  print STDERR "\nUsage: $0 [--peer-port=PORT]\n\n";
+  exit(1);
+}
 
 42; # End of App::Octavius::Tracker
 

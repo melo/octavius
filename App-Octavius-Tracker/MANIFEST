@@ -4,5 +4,6 @@ Makefile.PL
 README
 lib/App/Octavius/Tracker.pm
 t/00-load.t
+t/01-args.t
 t/pod-coverage.t
 t/pod.t
