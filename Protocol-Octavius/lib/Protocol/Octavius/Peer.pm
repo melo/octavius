@@ -17,8 +17,8 @@ sub send {
   my $pending = $self->{pending};
   
   my $guard; $guard = $self->_cb_in(2, sub {
-    delete $pending->{$id};
-    $cb->($self, $id, undef) if $cb;
+    my $state = delete $pending->{$id};
+    $cb->($self, $id, undef) if $state && $cb;
   });
   
   $pending->{$id} = {
