@@ -2,8 +2,11 @@ package App::Octavius::Tracker;
 
 use warnings;
 use strict;
+use base 'Mojo::Base';
 
 our $VERSION = '0.01';
+
+__PACKAGE__->attr('peer_port', chained => 1, default => 4920);
 
 
 42; # End of App::Octavius::Tracker
