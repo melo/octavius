@@ -21,7 +21,7 @@ sub msg_encoder {
   my $tmpl = 'nCC' . ('Z*' x $n_attrs);  
   my $header = pack($tmpl, $id, $type, $n_attrs, @attrs);
   
-  return (pack('N', length($header)).$header, $id);
+  return ($id, pack('N', length($header)).$header);
 }
 
 

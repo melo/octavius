@@ -17,7 +17,7 @@ my @msgs_tests = (
 my $expected_id = 1;
 foreach my $test (@msgs_tests) {
   my ($args, $result) = @$test;
-  my ($msg, $id) = msg_encoder(@$args);
+  my ($id, $msg) = msg_encoder(@$args);
   is($msg, $result, "encode correct for ID $expected_id ".length($msg).' '.length($result));
   is($id, $expected_id++, 'proper id');
   

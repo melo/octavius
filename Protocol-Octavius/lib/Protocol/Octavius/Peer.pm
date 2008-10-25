@@ -68,7 +68,7 @@ sub send_ack {
   my $self = shift;
   my $id   = shift;
   
-  return $self->send($id, msg_encoder($id, 'A', @_));
+  return $self->send(msg_encoder($id, 'A', @_));
 }
 
 
