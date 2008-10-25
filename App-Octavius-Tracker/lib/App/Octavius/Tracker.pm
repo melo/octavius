@@ -4,13 +4,79 @@ use warnings;
 use strict;
 use base 'Mojo::Base';
 use AnyEvent;
+use AnyEvent::Socket;
 use Getopt::Long;
+use IO::Socket::INET qw( SOMAXCONN );
 
 our $VERSION = '0.01';
 
 __PACKAGE__->attr('agents_port', chained => 1, default => 4920);
+__PACKAGE__->attr('agents_host', chained => 1);
+__PACKAGE__->attr('agents_listen_queue',
+  chained => 1,
+  default => sub { SOMAXCONN },
+);
 
 __PACKAGE__->attr('tracker_guard', chained => 1);
+__PACKAGE__->attr('agents_port_guard', chained => 1);
+
+
+#######################
+# Peer listening socket
+
+sub start_agents_port {
+  my $self = shift;
+  
+  # Already listening
+  return if $self->agents_port_guard;
+  
+  my $guard = tcp_server($self->agents_host, $self->agents_port,
+    # on connection
+    sub {
+      my ($sock, $peer_host, $peer_port) = @_;
+      
+      if (!$sock) {
+        $self->log("Connect failed: $!");
+        return;
+      }
+      
+      syswrite($sock, "hello $peer_host $peer_port, going down\n");
+      close($sock);
+      $self->stop;
+      # ...
+    },
+    
+    # Setup listen queue size, record our hostname and port
+    sub {
+      $self->agents_host($_[1])->agents_port($_[2]);
+      
+      return $self->agents_listen_queue;
+    }
+  );
+  
+  $self->agents_port_guard(sub { $guard = undef });
+  $self->startup_banner;
+  
+  return;
+}
+
+sub stop_agents_port {
+  my $self = shift;
+  
+  my $g = $self->agents_port_guard;
+  $g->() if $g;
+  
+  return;
+}
+
+sub startup_banner {
+  my $self = shift;
+  my $host = $self->agents_host;
+  my $port = $self->agents_port;
+  
+  $self->log("Ready for agents at $host:$port");
+}
+
 
 #############################
 # Manage the tracker lifetime
@@ -20,7 +86,7 @@ sub start {
   
   $SIG{PIPE} = 'IGNORE';
   
-#  $self->start_agents_port;
+  $self->start_agents_port;
   
   my $guard = AnyEvent->condvar;
   $self->tracker_guard(sub { $guard->send });
@@ -31,7 +97,7 @@ sub start {
 sub stop {
   my $self = shift;
   
-#  $self->stop_agents_port;
+  $self->stop_agents_port;
 
   my $g = $self->tracker_guard;
   $g->() if $g;
@@ -47,7 +113,9 @@ sub parse_options {
   my $self = shift;
 
   my $ok = GetOptions(
-    'agents-port=i' => sub { $self->agents_port($_[1]) },
+    'agents-port=i'         => sub { $self->agents_port($_[1]) },
+    'agents-host=s'         => sub { $self->agents_host($_[1]) },
+    'agents-listen-queue=i' => sub { $self->agents_listen_queue($_[1]) },
   );
   
   $self->usage unless $ok;
@@ -56,7 +124,18 @@ sub parse_options {
 }
 
 sub usage {
-  print STDERR "\nUsage: $0 [--agents-port=PORT]\n\n";
+  print STDERR <<"  USAGE";
+
+Usage: $0 OPTIONS
+
+  Options can be:
+  
+    --agents-host           IP to bind the tracker to
+                            (default: all interfaces)
+    --agents-port           TCP port to use (default: 4920)
+    --agents-listen-queue   Tweak the number of pending agents to accept
+
+  USAGE
   exit(1);
 }
 
