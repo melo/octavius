@@ -3,54 +3,37 @@ package App::Octavius::Tracker;
 use warnings;
 use strict;
 
+our $VERSION = '0.01';
+
+
+42; # End of App::Octavius::Tracker
+
+__END__
+
+=encoding utf8
+
 =head1 NAME
 
-App::Octavius::Tracker - The great new App::Octavius::Tracker!
+App::Octavius::Tracker - A tracker for an Octavius cloud
+
 
 =head1 VERSION
 
 Version 0.01
 
-=cut
-
-our $VERSION = '0.01';
-
 
 =head1 SYNOPSIS
-
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
 
     use App::Octavius::Tracker;
 
     my $foo = App::Octavius::Tracker->new();
     ...
 
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 FUNCTIONS
-
-=head2 function1
-
-=cut
-
-sub function1 {
-}
-
-=head2 function2
-
-=cut
-
-sub function2 {
-}
 
 =head1 AUTHOR
 
 Pedro Melo, C<< <melo at cpan.org> >>
+
 
 =head1 BUGS
 
@@ -96,12 +79,8 @@ L<http://search.cpan.org/dist/App-Octavius-Tracker>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2008 Pedro Melo, all rights reserved.
+Copyright 2008 Pedro Melo,.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-
-=cut
-
-1; # End of App::Octavius::Tracker
