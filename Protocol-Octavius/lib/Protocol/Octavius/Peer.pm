@@ -62,8 +62,9 @@ sub receive {
 ###############
 # Subclass this
 
-sub log { croak "Subclass $_[0] must declare log(), " }
-
+sub log    { croak "Subclass $_[0] must declare log(), "    }
+sub _write { croak "Subclass $_[0] must declare _write(), " }
+sub _cb_in { croak "Subclass $_[0] must declare _cb_in(), " }
 
 42; # End of X
 
