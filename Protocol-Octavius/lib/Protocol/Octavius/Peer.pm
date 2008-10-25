@@ -71,6 +71,14 @@ sub send_ack {
   return $self->send(msg_encoder($id, 'A', @_));
 }
 
+sub send_ident {
+  my $self = shift;
+  my $cb;
+  $cb = pop(@_) if ref($_[-1]) eq 'CODE';
+  
+  return $self->send(msg_encoder(undef, 'I', @_), $cb);
+}
+
 
 ###############
 # Subclass this
