@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use base 'Protocol::Octavius::Base';
 use Carp;
+use Protocol::Octavius::MessageCoder qw( :coders );
 
 our $VERSION = '0.1';
 
@@ -57,6 +58,17 @@ sub receive {
   $self->log("Got message type $id '$type'");
   
   return;
+}
+
+
+################
+# Valid messages
+
+sub send_ack {
+  my $self = shift;
+  my $id   = shift;
+  
+  return $self->send($id, msg_encoder($id, 'A', @_));
 }
 
 
